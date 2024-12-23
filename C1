@@ -1,0 +1,79 @@
+local function CheckItem(ItemName)
+  return game:GetService("Players").LocalPlayer.Backpack:FindFirstChild(ItemName) or game:GetService("Players").LocalPlayer.Character:FindFirstChild(ItemName) or false
+end
+
+local function CheckAwakenedFruit(FruitName)
+  local Fruit = game:GetService("Players").LocalPlayer.Backpack:FindFirstChild(FruitName)
+  if Fruit and Fruit:FindFirstChild("AwakenedMoves") then
+    local Moves = Fruit.AwakenedMoves
+    return Moves:FindFirstChild("Z") and Moves:FindFirstChild("X") and Moves:FindFirstChild("C") and Moves:FindFirstChild("V") and Moves:FindFirstChild("F")
+  end
+  return false
+end
+
+local function CheckLevel()
+  local Level = game:GetService("Players").LocalPlayer:FindFirstChild("Data"):FindFirstChild("Level")
+  return Level and Level.Value or 0
+end
+
+local function CheckFragment()
+  local Fragment = game:GetService("Players").LocalPlayer:FindFirstChild("Data"):FindFirstChild("Fragments")
+  return Fragment and Fragment.Value or 0
+end
+
+local function CheckBeli()
+  local Beli = game:GetService("Players").LocalPlayer:FindFirstChild("Data"):FindFirstChild("Beli")
+  return Beli and Beli.Value or 0
+end
+
+local function CreateFile()
+  writefile(game.Players.LocalPlayer.Name..".txt", "Yummytool")
+  print("Completed")
+end
+
+local function CheckConditions()
+  local requiredFruits = {
+    ["Buddha-Buddha"] = 200,
+    ["Light-Light"] = 110,
+    ["Magma-Magma"] = 140,
+    ["Mammoth-Mammoth"] = 300,
+    ["Leopard-Leopard"] = 300,
+    ["Kitsune-Kitsune"] = 300,
+    ["T-Rex-T-Rex"] = 300,
+    ["Gas-Gas"] = 300,
+    ["Dragon-Dragon"] = 200
+  }
+
+  local Level = CheckLevel()
+  local Fragment = CheckFragment()
+  local Beli = CheckBeli()
+  local GodHuman = CheckItem("Godhuman") and Level >= 350
+  local CursedDualKatana = CheckItem("Cursed Dual Katana")
+  local CursedDualKatanaValid = not CursedDualKatana or (CursedDualKatana and Level >= 375)
+
+  local hasValidFruit = false
+  for fruitName, requiredLevel in pairs(requiredFruits) do
+    if (fruitName == "Buddha-Buddha" or fruitName == "Light-Light" or fruitName == "Magma-Magma") then
+      if CheckAwakenedFruit(fruitName) and Level >= requiredLevel then
+        hasValidFruit = true
+        break
+      end
+    else
+      if CheckItem(fruitName) and Level >= requiredLevel then
+        hasValidFruit = true
+        break
+      end
+    end
+  end
+
+  return hasValidFruit and GodHuman and CursedDualKatanaValid and Beli >= 1 and Fragment >= 1 and Level >= 2600
+end
+
+while true do
+  if CheckConditions() then
+    CreateFile()
+  else
+    print("Not Enough")
+  end
+  wait(10)
+end
