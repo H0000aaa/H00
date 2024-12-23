@@ -1,0 +1,4 @@
+while true do
+  game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("LoadItem","Cursed Dual Katana")
+  wait(300)
+end
